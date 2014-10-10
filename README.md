@@ -74,13 +74,16 @@ WHY
 ===
 
 With a shiny-server, you've probably got developers wanting to try out new
-versions of their app on something bigger than their current workstation.  
+versions of their app on something bigger than their current workstation.
+Or, maybe you want them to throw their apps on the webserver so you've got
+an idea of what libraries need to be installed.
+
 This pair of scripts lets you delegate the installation and removal of those
-apps.  Probably more valuably, it gives you a couple of generic documents to 
+apps.  Probably more valuably, it gives you a couple of generic documents to
 hand to end users on how to sftp their data to the server, and actually run
 the scripts.
 
 I don't really recommend giving your devs admin authority on a prod box --
 and that's what these scripts will give them.  This is ideal for a trusted
-userbase, in a dev or QA environment  On your prod boxes, you'll want to 
+userbase, in a dev or QA environment.  On your prod boxes, you'll want to
 restrict who can run these scripts a bit more.
