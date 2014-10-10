@@ -1,0 +1,43 @@
+#!/bin/bash 
+# shinyremove -- a script designed to remove applications from
+#  a shiny server app directory, and restart the server.
+#  see Readme for more details
+# copyright 2014 Andersand Corporation
+#  licensed under the GPL v3, full terms in the attached LICENSE file
+
+### inverse of the installer -- it'll remove a named application
+### if given the word "all" as the second argument, it'll also remove 
+### all the .PROJECTNAME backup directories, too
+
+if [[ $EUID -eq 0 ]]; then
+  PROJECTNAME="$1"
+  MASTERTARGET=/srv/shiny-server
+  echo "You've entered $PROJECTNAME"
+  if [[ "x"$2 == "xall" ]]; then
+    echo "you've entered 'all' to remove all backup versions of this project" 
+  fi
+  FULLTARGET=$MASTERTARGET/$PROJECTNAME
+  echo "If you wish to procede, type 'yes' and hit enter"
+  read GOAHEAD
+  if [[ "x"$GOAHEAD == "xyes" ]]; then
+    if [[ -d $FULLTARGET ]]; then
+      rm -rf $FULLTARGET || echo "unable to remove $FULLTARGET"
+      logger "$0:  deleted $FULLTARGET"
+    fi
+
+    if [[ "x"$2 == "xall" ]]; then
+      rm -rf $MASTERTARGET/.$PROJECTNAME.[0-9]?[0-9]*
+      logger "$0:  deleted all backups of $PROJECTNAME"
+    fi
+
+  else
+    echo "$0: refusing to delete files without explicit confirmation"
+    echo "$0: I would have run \"rm -rf $FULLTARGET\""
+    if [[ "x"$2 == "xall" ]]; then
+      echo "$0: and \"rm -rf $MASTERTARGET/.$PROJECTNAME.[0-9]?[0-9]*\""
+    fi
+  fi
+else
+  echo "$0: This program MUST be run through sudo"
+fi
+

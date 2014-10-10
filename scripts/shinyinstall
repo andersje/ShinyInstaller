@@ -1,0 +1,37 @@
+#!/bin/bash
+# shinyinstall -- a script designed to install applications from
+#  a shiny server app directory, and restart the server.
+#  see Readme for more details
+# copyright 2014 Andersand Corporation
+#  licensed under the GPL v3, full terms in the attached LICENSE file
+
+
+if [[ $EUID -eq 0 ]]; then
+
+  ZIPFILE="$1"
+  TARGETDIR=$(zipinfo $1| head -3 | tail -1 | awk '{print $NF}' | awk -F\/ '{print $1}' )
+  MASTERTARGET=/srv/shiny-server
+  SERVICESCRIPT=/etc/init.d/shiny-server
+  NOW=`/bin/date +%s`
+  echo "target for $ZIPFILE is $TARGETDIR"
+  FULLTARGET=$MASTERTARGET/$TARGETDIR
+  WORKDIR=/tmp
+  echo "about to clear /tmp"
+  if [[ -d $WORKDIR/$TARGETDIR ]]; then
+    rm -rf $WORKDIR/$TARGETDIR || echo "unable to clear $WORKDIR/$TARGETDIR" && exit 0
+  fi
+
+  unzip -d $WORKDIR $ZIPFILE
+
+  if [[ -d $FULLTARGET ]]; then
+    echo "$FULLTARGET already exists.  Backing up."
+    mv $FULLTARGET $MASTERTARGET/.$TARGETDIR.$NOW
+  fi
+
+  mv $WORKDIR/$TARGETDIR $FULLTARGET
+  chown -R shiny:shiny $MASTERTARGET
+  $SERVICESCRIPT restart
+else
+  echo "$0: sorry, this script must be run as root or through sudo"
+  exit 1
+fi

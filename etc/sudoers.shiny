@@ -1,0 +1,7 @@
+#/etc/sudoers.d/sudoers.shiny
+#
+# put this file in /etc/sudoers.d/
+# the name of it doesn't really matter, but naming it shiny
+# or sudoers.shiny may help you remember what its for.
+
+%rinstallers ALL=NOPASSWD: /usr/local/bin/shinyinstall /usr/local/bin/shinyremove
