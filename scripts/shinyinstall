@@ -9,7 +9,7 @@
 if [[ $EUID -eq 0 ]]; then
 
   ZIPFILE="$1"
-  TARGETDIR=$(zipinfo $1| head -3 | tail -1 | awk '{print $NF}' | awk -F\/ '{print $1}' )
+  TARGETDIR=$(zipinfo $ZIPFILE | head -3 | tail -1 | awk '{print $NF}' | awk -F\/ '{print $1}')
   MASTERTARGET=/srv/shiny-server
   SERVICESCRIPT=/etc/init.d/shiny-server
   NOW=`/bin/date +%s`
